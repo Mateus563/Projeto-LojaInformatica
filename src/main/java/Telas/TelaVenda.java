@@ -253,7 +253,7 @@ public class TelaVenda extends javax.swing.JDialog {
 
         String sql = "INSERT INTO venda (data_venda, valor_total, forma_pagamento, id_cliente) VALUES (?, ?, ?, ?)";
         try (Connection conexao = DriverManager.getConnection(URL, USUARIO, SENHA); PreparedStatement pstmt = conexao.prepareStatement(sql)) {
-            pstmt.setString(1, dtvenda);
+            pstmt.setDate(1, java.sql.Date.valueOf(dtvenda));
             pstmt.setDouble(2, Double.parseDouble(vltotal));
             pstmt.setString(3, formpg);
             pstmt.setInt(4, Integer.parseInt(codcliente));
@@ -288,7 +288,7 @@ public class TelaVenda extends javax.swing.JDialog {
         int id = Integer.parseInt(txtId.getText());
         String sql = "UPDATE venda SET data_venda = ?, valor_total = ?, forma_pagamento = ?, id_cliente = ? WHERE id = ?";
         try (Connection conexao = DriverManager.getConnection(URL, USUARIO, SENHA); PreparedStatement pstmt = conexao.prepareStatement(sql)) {
-            pstmt.setString(1, dtvenda);
+            pstmt.setDate(1, java.sql.Date.valueOf(dtvenda));
             pstmt.setDouble(2, Double.parseDouble(vltotal));
             pstmt.setString(3, formpg);
             pstmt.setInt(4, Integer.parseInt(codcliente));
