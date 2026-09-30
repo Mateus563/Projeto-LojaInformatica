@@ -4,13 +4,12 @@ package Telas;
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
-
 /**
  *
  * @author mateus.moras
  */
 public class TelaMenu extends javax.swing.JFrame {
-    
+
     private static final java.util.logging.Logger Logger = java.util.logging.Logger.getLogger(TelaMenu.class.getName());
 
     /**
@@ -33,6 +32,8 @@ public class TelaMenu extends javax.swing.JFrame {
         btnProduto = new javax.swing.JButton();
         btnVenda = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
+        btnCategoria = new javax.swing.JButton();
+        jButton2 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -57,54 +58,88 @@ public class TelaMenu extends javax.swing.JFrame {
             }
         });
 
-        jLabel1.setText("Tela Menu");
+        jLabel1.setText("Menu");
+
+        btnCategoria.setText("Categoria");
+        btnCategoria.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnCategoriaActionPerformed(evt);
+            }
+        });
+
+        jButton2.setText("Sair");
+        jButton2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton2ActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(38, 38, 38)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jLabel1)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(btnCliente)
-                        .addGap(93, 93, 93)
-                        .addComponent(btnProduto)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 104, Short.MAX_VALUE)
+                .addGap(36, 36, 36)
+                .addComponent(btnCliente)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 42, Short.MAX_VALUE)
+                .addComponent(btnProduto)
+                .addGap(58, 58, 58)
+                .addComponent(btnCategoria)
+                .addGap(37, 37, 37)
                 .addComponent(btnVenda)
-                .addGap(59, 59, 59))
+                .addGap(42, 42, 42))
+            .addGroup(layout.createSequentialGroup()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(243, 243, 243)
+                        .addComponent(jLabel1))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(221, 221, 221)
+                        .addComponent(jButton2)))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(25, 25, 25)
+                .addGap(27, 27, 27)
                 .addComponent(jLabel1)
-                .addGap(111, 111, 111)
+                .addGap(109, 109, 109)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnCliente)
                     .addComponent(btnProduto)
-                    .addComponent(btnVenda))
-                .addContainerGap(164, Short.MAX_VALUE))
+                    .addComponent(btnVenda)
+                    .addComponent(btnCategoria))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 102, Short.MAX_VALUE)
+                .addComponent(jButton2)
+                .addGap(35, 35, 35))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnClienteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnClienteActionPerformed
-        TelaCliente tc = new TelaCliente ();
-        tc.setVisible(true);
+        TelaCliente tela = new TelaCliente(this, true);
+        tela.setVisible(true);
     }//GEN-LAST:event_btnClienteActionPerformed
 
     private void btnProdutoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnProdutoActionPerformed
-        TelaProduto tp = new TelaProduto ();
-        tp.setVisible(true);
+        TelaProduto tela = new TelaProduto(this, true);
+        tela.setVisible(true);
     }//GEN-LAST:event_btnProdutoActionPerformed
 
     private void btnVendaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnVendaActionPerformed
-        TelaVenda tv = new TelaVenda ();
-        tv.setVisible(true);                                                                       
+        TelaVenda tela = new TelaVenda(this, true);
+        tela.setVisible(true);
     }//GEN-LAST:event_btnVendaActionPerformed
+
+    private void btnCategoriaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCategoriaActionPerformed
+        TelaCategoria tela = new TelaCategoria(this, true);
+        tela.setVisible(true);
+    }//GEN-LAST:event_btnCategoriaActionPerformed
+
+    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+        dispose();
+    }//GEN-LAST:event_jButton2ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -145,9 +180,11 @@ public class TelaMenu extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnCategoria;
     private javax.swing.JButton btnCliente;
     private javax.swing.JButton btnProduto;
     private javax.swing.JButton btnVenda;
+    private javax.swing.JButton jButton2;
     private javax.swing.JLabel jLabel1;
     // End of variables declaration//GEN-END:variables
 }

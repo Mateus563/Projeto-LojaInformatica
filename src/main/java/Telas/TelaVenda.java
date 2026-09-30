@@ -4,17 +4,44 @@
  */
 package Telas;
 
+import org.apache.commons.validator.GenericValidator;
+import javax.swing.table.DefaultTableModel;
+import java.sql.*;
+
 /**
  *
  * @author mateus.moras
  */
-public class TelaVenda extends javax.swing.JFrame {
+public class TelaVenda extends javax.swing.JDialog {
+
+    private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(TelaVenda.class.getName());
+
+    private static final String URL = "jdbc:postgresql://localhost:5432/lojainformatica";
+    private static final String USUARIO = "postgres";
+    private static final String SENHA = "postgres";
 
     /**
      * Creates new form TelaProduto
      */
-    public TelaVenda() {
+    public TelaVenda(java.awt.Frame parent, boolean modal) {
+        super(parent, modal);
         initComponents();
+
+        txtId.setEditable(false);
+
+        tblItens.getSelectionModel().addListSelectionListener(evt -> {
+            if (!evt.getValueIsAdjusting() && tblItens.getSelectedRow() != -1) {
+                DefaultTableModel modelo = (DefaultTableModel) tblItens.getModel();
+                int linha = tblItens.getSelectedRow();
+                txtId.setText(modelo.getValueAt(linha, 0).toString());
+                txtDtVenda.setText(modelo.getValueAt(linha, 1).toString());
+                txtValorTotal.setText(modelo.getValueAt(linha, 2).toString());
+                txtFormPg.setText(modelo.getValueAt(linha, 3).toString());
+                txtCodCliente.setText(modelo.getValueAt(linha, 4).toString());
+            }
+        });
+
+        carregarTabela();
     }
 
     /**
@@ -26,8 +53,6 @@ public class TelaVenda extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jScrollPane1 = new javax.swing.JScrollPane();
-        jTable1 = new javax.swing.JTable();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
         txtDtVenda = new javax.swing.JTextField();
@@ -37,27 +62,17 @@ public class TelaVenda extends javax.swing.JFrame {
         txtFormPg = new javax.swing.JTextField();
         txtCodCliente = new javax.swing.JTextField();
         jLabel5 = new javax.swing.JLabel();
-        btnSalvar = new javax.swing.JButton();
+        btnCadastrar = new javax.swing.JButton();
         jScrollPane2 = new javax.swing.JScrollPane();
         tblItens = new javax.swing.JTable();
-        btnListar = new javax.swing.JButton();
-        btnExcluir = new javax.swing.JButton();
-        btnEditar = new javax.swing.JButton();
+        btnAtualizar = new javax.swing.JButton();
+        btnRemover = new javax.swing.JButton();
+        btnLimpar = new javax.swing.JButton();
+        jLabel6 = new javax.swing.JLabel();
+        txtId = new javax.swing.JTextField();
+        jLabel9 = new javax.swing.JLabel();
 
-        jTable1.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
-            },
-            new String [] {
-                "Title 1", "Title 2", "Title 3", "Title 4"
-            }
-        ));
-        jScrollPane1.setViewportView(jTable1);
-
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
         jLabel1.setText("Tela de Venda");
 
@@ -69,7 +84,12 @@ public class TelaVenda extends javax.swing.JFrame {
 
         jLabel5.setText("Código do Cliente");
 
-        btnSalvar.setText("Salvar");
+        btnCadastrar.setText("Cadastrar");
+        btnCadastrar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnCadastrarActionPerformed(evt);
+            }
+        });
 
         tblItens.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -79,60 +99,92 @@ public class TelaVenda extends javax.swing.JFrame {
                 {null, null, null, null, null}
             },
             new String [] {
-                "Title 1", "Title 2", "Title 3", "Title 4", "Title 5"
+                "ID", "Data Venda", "Valor Total", "Form/ Pagameto", "Cod/Cliente"
             }
         ));
         jScrollPane2.setViewportView(tblItens);
 
-        btnListar.setText("Listar Vendas");
+        btnAtualizar.setText("Atualizar");
+        btnAtualizar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnAtualizarActionPerformed(evt);
+            }
+        });
 
-        btnExcluir.setText("Excluir");
+        btnRemover.setText("Remover");
+        btnRemover.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnRemoverActionPerformed(evt);
+            }
+        });
 
-        btnEditar.setText("Editar");
+        btnLimpar.setText("Limpar");
+        btnLimpar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnLimparActionPerformed(evt);
+            }
+        });
+
+        jLabel6.setText("ID");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel9, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(214, 214, 214)
-                        .addComponent(jLabel1))
-                    .addGroup(layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(jLabel2)
                             .addComponent(jLabel3)
                             .addComponent(jLabel4)
-                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                                .addComponent(txtFormPg, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 200, Short.MAX_VALUE)
-                                .addComponent(txtValorTotal, javax.swing.GroupLayout.Alignment.LEADING)
-                                .addComponent(txtDtVenda, javax.swing.GroupLayout.Alignment.LEADING))
+                            .addComponent(txtFormPg, javax.swing.GroupLayout.DEFAULT_SIZE, 200, Short.MAX_VALUE)
+                            .addComponent(txtValorTotal)
+                            .addComponent(txtDtVenda)
                             .addComponent(jLabel5)
-                            .addComponent(txtCodCliente, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(btnSalvar))
+                            .addComponent(txtCodCliente, javax.swing.GroupLayout.DEFAULT_SIZE, 200, Short.MAX_VALUE)
+                            .addComponent(btnCadastrar)
+                            .addComponent(jLabel6)
+                            .addComponent(txtId))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createSequentialGroup()
-                                .addComponent(btnListar)
+                                .addComponent(btnAtualizar)
                                 .addGap(109, 109, 109)
-                                .addComponent(btnEditar)
+                                .addComponent(btnLimpar)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(btnExcluir))
+                                .addComponent(btnRemover))
                             .addGroup(layout.createSequentialGroup()
-                                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 452, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 452, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addGap(171, 171, 171)
+                                        .addComponent(jLabel1)))
                                 .addGap(0, 0, Short.MAX_VALUE)))))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jLabel1)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                     .addGroup(layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(jLabel1)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 273, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(14, 14, 14)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(btnAtualizar)
+                            .addComponent(btnRemover)
+                            .addComponent(btnLimpar)))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(14, 14, 14)
+                        .addComponent(jLabel6)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(txtId, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jLabel2)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(txtDtVenda, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -149,18 +201,167 @@ public class TelaVenda extends javax.swing.JFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(txtCodCliente, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(btnSalvar))
-                    .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 273, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(btnListar)
-                    .addComponent(btnExcluir)
-                    .addComponent(btnEditar))
-                .addContainerGap(8, Short.MAX_VALUE))
+                        .addComponent(btnCadastrar)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jLabel9, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void btnCadastrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCadastrarActionPerformed
+        cadastrar();
+    }//GEN-LAST:event_btnCadastrarActionPerformed
+
+    private void btnAtualizarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAtualizarActionPerformed
+        atualizar();
+    }//GEN-LAST:event_btnAtualizarActionPerformed
+
+    private void btnLimparActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLimparActionPerformed
+        limpar();
+    }//GEN-LAST:event_btnLimparActionPerformed
+
+    private void btnRemoverActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRemoverActionPerformed
+        remover();
+    }//GEN-LAST:event_btnRemoverActionPerformed
+
+    private String validar(String dtvenda, String codcliente) {
+
+        if (GenericValidator.isBlankOrNull(dtvenda)) {
+            return "Informe a data da Venda.";
+        }
+
+        if (GenericValidator.isBlankOrNull(codcliente)) {
+            return "Informe o codigo do cliente.";
+        }
+
+        return null;
+    }
+
+    private void cadastrar() {
+        String dtvenda = txtDtVenda.getText().trim();
+        String vltotal = txtValorTotal.getText().trim();
+        String formpg = txtFormPg.getText().trim();
+        String codcliente = txtCodCliente.getText().trim();
+
+        String erro = validar(dtvenda, codcliente);
+        if (erro != null) {
+            javax.swing.JOptionPane.showMessageDialog(this, erro, "Dados inválidos", javax.swing.JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        String sql = "INSERT INTO venda (data_venda, valor_total, forma_pagamento, id_cliente) VALUES (?, ?, ?, ?)";
+        try (Connection conexao = DriverManager.getConnection(URL, USUARIO, SENHA); PreparedStatement pstmt = conexao.prepareStatement(sql)) {
+            pstmt.setString(1, dtvenda);
+            pstmt.setDouble(2, Double.parseDouble(vltotal));
+            pstmt.setString(3, formpg);
+            pstmt.setInt(4, Integer.parseInt(codcliente));
+            pstmt.executeUpdate();
+
+            jLabel4.setText("Venda \"" + dtvenda + "\" cadastrada.");
+            limpar();
+            carregarTabela();
+        } catch (SQLException e) {
+            javax.swing.JOptionPane.showMessageDialog(this, "Erro ao cadastrar: " + e.getMessage(),
+                    "Erro de banco de dados", javax.swing.JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    private void atualizar() {
+        if (txtId.getText().isBlank()) {
+            javax.swing.JOptionPane.showMessageDialog(this, "Selecione uma venda na tabela primeiro.",
+                    "Nenhuma venda selecionada", javax.swing.JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        String dtvenda = txtDtVenda.getText().trim();
+        String vltotal = txtValorTotal.getText().trim();
+        String formpg = txtFormPg.getText().trim();
+        String codcliente = txtCodCliente.getText().trim();
+        String erro = validar(dtvenda, codcliente);
+        if (erro != null) {
+            javax.swing.JOptionPane.showMessageDialog(this, erro, "Dados inválidos", javax.swing.JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        int id = Integer.parseInt(txtId.getText());
+        String sql = "UPDATE venda SET data_venda = ?, valor_total = ?, forma_pagamento = ?, id_cliente = ? WHERE id = ?";
+        try (Connection conexao = DriverManager.getConnection(URL, USUARIO, SENHA); PreparedStatement pstmt = conexao.prepareStatement(sql)) {
+            pstmt.setString(1, dtvenda);
+            pstmt.setDouble(2, Double.parseDouble(vltotal));
+            pstmt.setString(3, formpg);
+            pstmt.setInt(4, Integer.parseInt(codcliente));
+            pstmt.setInt(5, id);
+            pstmt.executeUpdate();
+
+            jLabel9.setText("Venda #" + id + " atualizada.");
+            limpar();
+            carregarTabela();
+        } catch (SQLException e) {
+            javax.swing.JOptionPane.showMessageDialog(this, "Erro ao atualizar: " + e.getMessage(),
+                    "Erro de banco de dados", javax.swing.JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    private void remover() {
+        if (txtId.getText().isBlank()) {
+            javax.swing.JOptionPane.showMessageDialog(this, "Selecione uma venda na tabela primeiro.",
+                    "Nenhuma venda selecionada", javax.swing.JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        int id = Integer.parseInt(txtId.getText());
+        int confirmacao = javax.swing.JOptionPane.showConfirmDialog(this,
+                "Remover a venda \"" + txtDtVenda.getText() + "\" (#" + id + ")?",
+                "Confirmar remoção", javax.swing.JOptionPane.YES_NO_OPTION);
+        if (confirmacao != javax.swing.JOptionPane.YES_OPTION) {
+            return;
+        }
+
+        String sql = "DELETE FROM venda WHERE id = ?";
+        try (Connection conexao = DriverManager.getConnection(URL, USUARIO, SENHA); PreparedStatement pstmt = conexao.prepareStatement(sql)) {
+            pstmt.setInt(1, id);
+            pstmt.executeUpdate();
+
+            jLabel4.setText("Venda #" + id + " removida.");
+            limpar();
+            carregarTabela();
+        } catch (SQLException e) {
+            javax.swing.JOptionPane.showMessageDialog(this, "Erro ao remover: " + e.getMessage(),
+                    "Erro de banco de dados", javax.swing.JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    private void limpar() {
+        txtId.setText("");
+        txtDtVenda.setText("");
+        txtValorTotal.setText("");
+        txtFormPg.setText("");
+        txtCodCliente.setText("");
+        tblItens.clearSelection();
+        txtDtVenda.requestFocus();
+    }
+
+    private void carregarTabela() {
+        DefaultTableModel modelo = (DefaultTableModel) tblItens.getModel();
+        modelo.setRowCount(0);
+
+        String sql = "SELECT id, data_venda, valor_total, forma_pagamento, id_cliente FROM venda ORDER BY id";
+        try (Connection conexao = DriverManager.getConnection(URL, USUARIO, SENHA); PreparedStatement pstmt = conexao.prepareStatement(sql); ResultSet rs = pstmt.executeQuery()) {
+
+            while (rs.next()) {
+                modelo.addRow(new Object[]{
+                    rs.getInt("id"), rs.getString("data_venda"), rs.getDouble("valor_total"), rs.getString("forma_pagamento"), rs.getInt("id_cliente")
+                });
+            }
+            jLabel9.setText(modelo.getRowCount() + " venda(s) carregada(s).");
+        } catch (SQLException e) {
+            javax.swing.JOptionPane.showMessageDialog(this, "Erro ao carregar vendas: " + e.getMessage(),
+                    "Erro de banco de dados", javax.swing.JOptionPane.ERROR_MESSAGE);
+        }
+
+    }
 
     /**
      * @param args the command line arguments
@@ -192,29 +393,38 @@ public class TelaVenda extends javax.swing.JFrame {
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
+            @Override
             public void run() {
-                new TelaVenda().setVisible(true);
+                TelaVenda dialog = new TelaVenda(new javax.swing.JFrame(), true);
+                dialog.addWindowListener(new java.awt.event.WindowAdapter() {
+                    @Override
+                    public void windowClosing(java.awt.event.WindowEvent e) {
+                        System.exit(0);
+                    }
+                });
+                dialog.setVisible(true);
             }
         });
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton btnEditar;
-    private javax.swing.JButton btnExcluir;
-    private javax.swing.JButton btnListar;
-    private javax.swing.JButton btnSalvar;
+    private javax.swing.JButton btnAtualizar;
+    private javax.swing.JButton btnCadastrar;
+    private javax.swing.JButton btnLimpar;
+    private javax.swing.JButton btnRemover;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
-    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JLabel jLabel6;
+    private javax.swing.JLabel jLabel9;
     private javax.swing.JScrollPane jScrollPane2;
-    private javax.swing.JTable jTable1;
     private javax.swing.JTable tblItens;
     private javax.swing.JTextField txtCodCliente;
     private javax.swing.JTextField txtDtVenda;
     private javax.swing.JTextField txtFormPg;
+    private javax.swing.JTextField txtId;
     private javax.swing.JTextField txtValorTotal;
     // End of variables declaration//GEN-END:variables
 }

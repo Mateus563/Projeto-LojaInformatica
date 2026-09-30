@@ -1,8 +1,9 @@
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  */
-
 package com.mycompany.lojainformatica;
+
+import Telas.TelaMenu;
 
 /**
  *
@@ -11,7 +12,7 @@ package com.mycompany.lojainformatica;
 public class LojaInformatica {
 
     public static void main(String[] args) {
-        TelaMenu tm = new TelaMenu();
-        tm.setVisible(true);
+        TelaMenu menu = new TelaMenu();
+        menu.setVisible(true);
     }
 }

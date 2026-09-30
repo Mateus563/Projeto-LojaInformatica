@@ -4,17 +4,45 @@
  */
 package Telas;
 
+import org.apache.commons.validator.GenericValidator;
+import javax.swing.table.DefaultTableModel;
+import java.sql.*;
+
 /**
  *
  * @author mateus.moras
  */
-public class TelaProduto extends javax.swing.JFrame {
+public class TelaProduto extends javax.swing.JDialog {
+
+    private static final java.util.logging.Logger Logger = java.util.logging.Logger.getLogger(TelaProduto.class.getName());
+
+    private static final String URL = "jdbc:postgresql://localhost:5432/lojainformatica";
+    private static final String USUARIO = "postgres";
+    private static final String SENHA = "postgres";
 
     /**
      * Creates new form TelaProduto
      */
-    public TelaProduto() {
+    public TelaProduto(java.awt.Frame parent, boolean modal) {
+        super(parent, modal);
         initComponents();
+
+        txtId.setEditable(false);
+
+        tblItens.getSelectionModel().addListSelectionListener(evt -> {
+            if (!evt.getValueIsAdjusting() && tblItens.getSelectedRow() != -1) {
+                DefaultTableModel modelo = (DefaultTableModel) tblItens.getModel();
+                int linha = tblItens.getSelectedRow();
+                txtId.setText(modelo.getValueAt(linha, 0).toString());
+                txtNome.setText(modelo.getValueAt(linha, 1).toString());
+                txtDescricao.setText(modelo.getValueAt(linha, 2).toString());
+                txtPreco.setText(modelo.getValueAt(linha, 3).toString());
+                txtQtdeEstoque.setText(modelo.getValueAt(linha, 4).toString());
+                txtCodCategoria.setText(modelo.getValueAt(linha, 5).toString());
+            }
+        });
+
+        carregarTabela();
     }
 
     /**
@@ -37,17 +65,20 @@ public class TelaProduto extends javax.swing.JFrame {
         jLabel6 = new javax.swing.JLabel();
         txtCodCategoria = new javax.swing.JTextField();
         jLabel8 = new javax.swing.JLabel();
-        txtDescricao = new javax.swing.JTextField();
         jScrollPane1 = new javax.swing.JScrollPane();
         tblItens = new javax.swing.JTable();
-        btnSalvar = new javax.swing.JButton();
-        btnListar = new javax.swing.JButton();
-        btnEditar = new javax.swing.JButton();
-        btnExcluir = new javax.swing.JButton();
+        btnCadastrar = new javax.swing.JButton();
+        btnAtualizar = new javax.swing.JButton();
+        btnLimpar = new javax.swing.JButton();
+        btnRemover = new javax.swing.JButton();
+        jLabel2 = new javax.swing.JLabel();
+        txtId = new javax.swing.JTextField();
+        txtDescricao = new javax.swing.JTextField();
+        jLabel9 = new javax.swing.JLabel();
 
         jLabel7.setText("jLabel7");
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
         jLabel1.setText("Tela Produto");
 
@@ -61,12 +92,6 @@ public class TelaProduto extends javax.swing.JFrame {
 
         jLabel8.setText("Descrição");
 
-        txtDescricao.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                txtDescricaoActionPerformed(evt);
-            }
-        });
-
         tblItens.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null, null, null},
@@ -75,70 +100,106 @@ public class TelaProduto extends javax.swing.JFrame {
                 {null, null, null, null, null, null}
             },
             new String [] {
-                "Title 1", "Title 2", "Title 3", "Title 4", "Title 5", "Title 6"
+                "ID", "Nome", "Descricao", "Preço", "Quant /estoque", "Cod/categoria"
             }
         ));
         jScrollPane1.setViewportView(tblItens);
 
-        btnSalvar.setText("Salvar");
+        btnCadastrar.setText("Cadastrar");
+        btnCadastrar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnCadastrarActionPerformed(evt);
+            }
+        });
 
-        btnListar.setText("Listar Produtos");
+        btnAtualizar.setText("Atualizar");
+        btnAtualizar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnAtualizarActionPerformed(evt);
+            }
+        });
 
-        btnEditar.setText("Editar");
+        btnLimpar.setText("Limpar");
+        btnLimpar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnLimparActionPerformed(evt);
+            }
+        });
 
-        btnExcluir.setText("Excluir");
+        btnRemover.setText("Remover");
+        btnRemover.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnRemoverActionPerformed(evt);
+            }
+        });
+
+        jLabel2.setText("ID");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel9, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(239, 239, 239)
+                        .addComponent(jLabel2)
+                        .addGap(196, 196, 196)
                         .addComponent(jLabel1))
                     .addGroup(layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel3)
-                            .addComponent(txtNome, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel8)
-                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                .addComponent(txtDescricao, javax.swing.GroupLayout.DEFAULT_SIZE, 200, Short.MAX_VALUE)
-                                .addComponent(jLabel5)
-                                .addComponent(jLabel6)
-                                .addComponent(txtCodCategoria)
-                                .addComponent(txtQtdeEstoque)
-                                .addComponent(jLabel4)
-                                .addComponent(txtPreco))
-                            .addComponent(btnSalvar))
-                        .addGap(18, 18, 18)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(jLabel3)
+                            .addComponent(txtNome, javax.swing.GroupLayout.DEFAULT_SIZE, 200, Short.MAX_VALUE)
+                            .addComponent(jLabel8)
+                            .addComponent(jLabel5)
+                            .addComponent(jLabel6)
+                            .addComponent(txtCodCategoria)
+                            .addComponent(txtQtdeEstoque)
+                            .addComponent(jLabel4)
+                            .addComponent(txtPreco)
+                            .addComponent(btnCadastrar)
+                            .addComponent(txtId)
+                            .addComponent(txtDescricao))
+                        .addGap(18, 18, 18)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createSequentialGroup()
-                                .addComponent(btnListar)
+                                .addComponent(btnAtualizar)
                                 .addGap(113, 113, 113)
-                                .addComponent(btnEditar)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(btnExcluir))
-                            .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 452, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                .addContainerGap(21, Short.MAX_VALUE))
+                                .addComponent(btnLimpar)
+                                .addGap(102, 102, 102)
+                                .addComponent(btnRemover))
+                            .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 492, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jLabel1)
-                .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(jLabel1)
+                        .addGap(18, 18, 18)
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 330, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(20, 20, 20)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(btnAtualizar)
+                            .addComponent(btnLimpar)
+                            .addComponent(btnRemover)))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(12, 12, 12)
+                        .addComponent(jLabel2)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(txtId, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jLabel3)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(txtNome, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(jLabel8)
-                        .addGap(10, 10, 10)
-                        .addComponent(txtDescricao, javax.swing.GroupLayout.PREFERRED_SIZE, 19, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addGap(9, 9, 9)
+                        .addComponent(txtDescricao, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jLabel4)
                         .addGap(8, 8, 8)
                         .addComponent(txtPreco, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -151,22 +212,179 @@ public class TelaProduto extends javax.swing.JFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(txtCodCategoria, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
-                        .addComponent(btnSalvar))
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 330, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(btnListar)
-                    .addComponent(btnEditar)
-                    .addComponent(btnExcluir))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addComponent(btnCadastrar)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jLabel9, javax.swing.GroupLayout.DEFAULT_SIZE, 16, Short.MAX_VALUE)
+                .addContainerGap())
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void txtDescricaoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtDescricaoActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_txtDescricaoActionPerformed
+    private void btnCadastrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCadastrarActionPerformed
+        cadastrar();
+    }//GEN-LAST:event_btnCadastrarActionPerformed
+
+    private void btnAtualizarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAtualizarActionPerformed
+        atualizar();
+    }//GEN-LAST:event_btnAtualizarActionPerformed
+
+    private void btnLimparActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLimparActionPerformed
+        limpar();
+    }//GEN-LAST:event_btnLimparActionPerformed
+
+    private void btnRemoverActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRemoverActionPerformed
+        remover();
+    }//GEN-LAST:event_btnRemoverActionPerformed
+
+    private String validar(String nome, String txtPreco) {
+
+        if (GenericValidator.isBlankOrNull(nome)) {
+            return "Informe o nome.";
+        }
+        if (GenericValidator.isBlankOrNull(txtPreco)) {
+            return "Informe o preço.";
+        }
+        if (!GenericValidator.isDouble(txtPreco)) {
+            return "Preço inválido - use apenas números (ex.: 19.90).";
+        }
+        if (Double.parseDouble(txtPreco) <= 0) {
+            return "Preço deve ser maior que zero.";
+        }
+        return null;
+    }
+
+    private void cadastrar() {
+        String nome = txtNome.getText().trim();
+        String descricao = txtDescricao.getText().trim();
+        String preco = txtPreco.getText().trim();
+        String qtdeestoque = txtQtdeEstoque.getText().trim();
+        String codcategoria = txtCodCategoria.getText().trim();
+
+        String erro = validar(nome, preco);
+        if (erro != null) {
+            javax.swing.JOptionPane.showMessageDialog(this, erro, "Dados inválidos", javax.swing.JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        String sql = "INSERT INTO produto (nome, descricao, preco, quantidade_estoque, id_categoria) VALUES (?, ?, ?, ?, ?)";
+        try (Connection conexao = DriverManager.getConnection(URL, USUARIO, SENHA); PreparedStatement pstmt = conexao.prepareStatement(sql)) {
+            pstmt.setString(1, nome);
+            pstmt.setString(2, descricao);
+            pstmt.setDouble(3, Double.parseDouble(preco));
+            pstmt.setInt(4, Integer.parseInt(qtdeestoque));
+            pstmt.setInt(5, Integer.parseInt(codcategoria));
+            pstmt.executeUpdate();
+
+            jLabel9.setText("Produto \"" + nome + "\" cadastrado.");
+            limpar();
+            carregarTabela();
+        } catch (SQLException e) {
+            javax.swing.JOptionPane.showMessageDialog(this, "Erro ao cadastrar: " + e.getMessage(),
+                    "Erro de banco de dados", javax.swing.JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    private void atualizar() {
+        if (txtId.getText().isBlank()) {
+            javax.swing.JOptionPane.showMessageDialog(this, "Selecione um produto na tabela primeiro.",
+                    "Nenhum produto selecionado", javax.swing.JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        String nome = txtNome.getText().trim();
+        String descricao = txtDescricao.getText().trim();
+        String preco = txtPreco.getText().trim();
+        String qtdeestoque = txtQtdeEstoque.getText().trim();
+        String codcategoria = txtCodCategoria.getText().trim();
+        String erro = validar(nome, preco);
+
+        if (erro != null) {
+            javax.swing.JOptionPane.showMessageDialog(this, erro, "Dados inválidos", javax.swing.JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        int id = Integer.parseInt(txtId.getText());
+        String sql = "UPDATE produto SET nome = ?, descricao = ?, preco = ?, quantidade_estoque = ?, id_categoria = ? WHERE id = ?";
+        try (Connection conexao = DriverManager.getConnection(URL, USUARIO, SENHA); PreparedStatement pstmt = conexao.prepareStatement(sql)) {
+            pstmt.setString(1, nome);
+            pstmt.setString(2, descricao);
+            pstmt.setDouble(3, Double.parseDouble(preco));
+            pstmt.setInt(4, Integer.parseInt(qtdeestoque));
+            pstmt.setInt(5, Integer.parseInt(codcategoria));
+            pstmt.setInt(6, id);
+
+            pstmt.executeUpdate();
+
+            jLabel9.setText("Produto \"" + nome + "\" atualizado.");
+            limpar();
+            carregarTabela();
+
+        } catch (SQLException e) {
+            javax.swing.JOptionPane.showMessageDialog(this, "Erro ao atualizar: " + e.getMessage(),
+                    "Erro de banco de dados", javax.swing.JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    private void remover() {
+        if (txtId.getText().isBlank()) {
+            javax.swing.JOptionPane.showMessageDialog(this, "Selecione um produto na tabela primeiro.",
+                    "Nenhum produto selecionado", javax.swing.JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        int id = Integer.parseInt(txtId.getText());
+        int confirmacao = javax.swing.JOptionPane.showConfirmDialog(this,
+                "Remover o produto \"" + txtNome.getText() + "\" (#" + id + ")?",
+                "Confirmar remoção", javax.swing.JOptionPane.YES_NO_OPTION);
+        if (confirmacao != javax.swing.JOptionPane.YES_OPTION) {
+            return;
+        }
+
+        String sql = "DELETE FROM produto WHERE id = ?";
+        try (Connection conexao = DriverManager.getConnection(URL, USUARIO, SENHA); PreparedStatement pstmt = conexao.prepareStatement(sql)) {
+            pstmt.setInt(1, id);
+            pstmt.executeUpdate();
+
+            jLabel9.setText("Produto #" + id + " removido.");
+            limpar();
+            carregarTabela();
+        } catch (SQLException e) {
+            javax.swing.JOptionPane.showMessageDialog(this, "Erro ao remover: " + e.getMessage(),
+                    "Erro de banco de dados", javax.swing.JOptionPane.ERROR_MESSAGE);
+        }
+
+    }
+
+    private void limpar() {
+        txtId.setText("");
+        txtNome.setText("");
+        txtDescricao.setText("");
+        txtPreco.setText("");
+        txtQtdeEstoque.setText("");
+        txtCodCategoria.setText("");
+        tblItens.clearSelection();
+        txtNome.requestFocus();
+    }
+
+    private void carregarTabela() {
+        DefaultTableModel modelo = (DefaultTableModel) tblItens.getModel();
+        modelo.setRowCount(0);
+
+        String sql = "SELECT id, nome, descricao, preco, quantidade_estoque, id_categoria FROM produto ORDER BY id";
+        try (Connection conexao = DriverManager.getConnection(URL, USUARIO, SENHA); PreparedStatement pstmt = conexao.prepareStatement(sql); ResultSet rs = pstmt.executeQuery()) {
+
+            while (rs.next()) {
+                modelo.addRow(new Object[]{
+                    rs.getInt("id"), rs.getString("nome"), rs.getString("descricao"), rs.getDouble("preco"), rs.getInt("quantidade_estoque"), rs.getInt("id_categoria")
+                });
+            }
+            jLabel9.setText(modelo.getRowCount() + " produto(s) carregado(s).");
+        } catch (SQLException e) {
+            javax.swing.JOptionPane.showMessageDialog(this, "Erro ao carregar produtos: " + e.getMessage(),
+                    "Erro de banco de dados", javax.swing.JOptionPane.ERROR_MESSAGE);
+        }
+    }
 
     /**
      * @param args the command line arguments
@@ -197,28 +415,39 @@ public class TelaProduto extends javax.swing.JFrame {
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
+            @Override
             public void run() {
-                new TelaProduto().setVisible(true);
+                TelaProduto dialog = new TelaProduto(new javax.swing.JFrame(), true);
+                dialog.addWindowListener(new java.awt.event.WindowAdapter() {
+                    @Override
+                    public void windowClosing(java.awt.event.WindowEvent e) {
+                        System.exit(0);
+                    }
+                });
+                dialog.setVisible(true);
             }
         });
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton btnEditar;
-    private javax.swing.JButton btnExcluir;
-    private javax.swing.JButton btnListar;
-    private javax.swing.JButton btnSalvar;
+    private javax.swing.JButton btnAtualizar;
+    private javax.swing.JButton btnCadastrar;
+    private javax.swing.JButton btnLimpar;
+    private javax.swing.JButton btnRemover;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
+    private javax.swing.JLabel jLabel9;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTable tblItens;
     private javax.swing.JTextField txtCodCategoria;
     private javax.swing.JTextField txtDescricao;
+    private javax.swing.JTextField txtId;
     private javax.swing.JTextField txtNome;
     private javax.swing.JTextField txtPreco;
     private javax.swing.JTextField txtQtdeEstoque;
